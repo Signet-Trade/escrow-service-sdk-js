@@ -16,6 +16,7 @@ jobs:
         with:
           node-version: '18.x'
           scope: '@signet-trade'
+          registry-url: 'https://registry.npmjs.org'
       - run: npm i --location=global yarn
       - run: |
           yarn
