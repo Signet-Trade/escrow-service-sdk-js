@@ -1,0 +1,23 @@
+name: Test on PR
+on:
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ${{ github.repository }}-${{ github.event.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build_publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '16.x'
+          scope: '@signet-trade'
+          registry-url: 'https://registry.npmjs.org'
+      - run: npm i --location=global yarn
+      - run: yarn
+      - run: yarn build
+      - run: yarn test

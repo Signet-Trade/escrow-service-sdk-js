@@ -1,0 +1,21 @@
+/* istanbul ignore file */
+/* eslint-disable */
+import type { ApiRequestOptions } from './ApiRequestOptions';
+
+type Resolver<T> = (options: ApiRequestOptions) => Promise<T>;
+type Headers = Record<string, string>;
+
+export type OpenAPIConfig = {
+	BASE?: string;
+	SIGNET_ACCESS_KEY: string;
+	SIGNET_ACCESS_SECRET: string;
+	HEADERS?: Headers | Resolver<Headers>;
+	VERBOSE?: boolean
+};
+
+export const OpenAPI: OpenAPIConfig = {
+	BASE: 'https://api.signet.trade',
+	SIGNET_ACCESS_KEY: '',
+	SIGNET_ACCESS_SECRET: '',
+	VERBOSE: false,
+};

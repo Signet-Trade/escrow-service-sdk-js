@@ -1,0 +1,52 @@
+{
+	"name": "@signet-trade/escrow-service-sdk",
+	"description": "Node SDK for Signet Trade's Escrow Service",
+	"version": "0.1.0",
+	"author": {
+		"name": "Signet Trade",
+		"url": "https://signet.trade/"
+	},
+	"packageManager": "yarn@3.2.4",
+	"type": "module",
+	"publishConfig": {
+		"access": "public"
+	},
+	"repository": "https://github.com/signet-trade/escrow-service-sdk-js",
+	"files": [
+		"dist/generated",
+		"dist/index*",
+		"README.md"
+	],
+	"license": "Apache-2.0",
+	"scripts": {
+		"build": "tsc",
+		"lint": "eslint .",
+		"postinstall": "ts-patch install -s",
+		"codegen": "yarn ts-node src/scripts/openapi-typescript-codegen.ts"
+	},
+	"dependencies": {
+		"axios": "^1.3.6"
+	},
+	"devDependencies": {
+		"@tsconfig/node16-strictest-esm": "^1.0.3",
+		"@types/eslint": "^8.4.6",
+		"@types/node": "^18.7.17",
+		"@typescript-eslint/eslint-plugin": "^5.37.0",
+		"@typescript-eslint/parser": "^5.37.0",
+		"eslint": "^8.23.1",
+		"eslint-config-prettier": "^8.5.0",
+		"eslint-import-resolver-typescript": "^3.5.1",
+		"eslint-plugin-import": "^2.26.0",
+		"eslint-plugin-unicorn": "^43.0.2",
+		"form-data": "^4.0.0",
+		"lint-staged": "^13.0.3",
+		"openapi-typescript-codegen": "^0.24.0",
+		"prettier": "^2.7.1",
+		"ts-node": "^10.9.1",
+		"ts-patch": "^2.0.2",
+		"typescript": "^4.9.3",
+		"typescript-transform-paths": "^3.4.4"
+	},
+	"exports": "./dist/index.js",
+	"types": "./dist/index.d.ts"
+}

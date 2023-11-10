@@ -1,0 +1,33 @@
+/* istanbul ignore file */
+/* tslint:disable */
+/* eslint-disable */
+import type { BaseHttpRequest } from './core/BaseHttpRequest';
+import type { OpenAPIConfig } from './core/OpenAPI';
+import { AxiosHttpRequest } from './core/AxiosHttpRequest';
+
+import { TemplatesService } from './services/TemplatesService';
+import { MachinesService } from './services/MachinesService';
+
+type HttpRequestConstructor = new (config: OpenAPIConfig) => BaseHttpRequest;
+
+export class EscrowServiceV0 {
+
+	public readonly templates: TemplatesService;
+	public readonly machines: MachinesService;
+
+	private readonly request: BaseHttpRequest;
+
+	constructor(config?: Partial<OpenAPIConfig>, HttpRequest: HttpRequestConstructor = AxiosHttpRequest) {
+		this.request = new HttpRequest({
+			BASE: config?.BASE ?? 'https://api.signet.trade',
+			HEADERS: config?.HEADERS ?? {},
+			SIGNET_ACCESS_KEY: config?.SIGNET_ACCESS_KEY ?? '',
+			SIGNET_ACCESS_SECRET: config?.SIGNET_ACCESS_SECRET ?? '',
+			VERBOSE: config?.VERBOSE ?? false
+		});
+
+		this.templates = new TemplatesService(this.request);
+		this.machines = new MachinesService(this.request);
+	}
+}
+
