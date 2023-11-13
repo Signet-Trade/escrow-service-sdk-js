@@ -1,10 +1,14 @@
 openapi: 3.0.3
 info:
   title: Signet Trade Escrow Service
-  description: TBD
+  description: 
   # termsOfService: TBD
   contact:
+    url: https://www.signet.trade/contact
     email: partners@signet.trade
+  license:
+    name: "Apache 2.0",
+    identifier: "Apache-2.0"
   version: 0.1.0
 servers:
   - url: "https://api.signet.trade"
@@ -23,6 +27,7 @@ paths:
       tags:
         - templates
       summary: Create a template
+      operationId: createTemplate
       requestBody:
         required: true
         content:
@@ -94,7 +99,8 @@ paths:
     put:
       tags:
         - templates
-      summary: Update a specific template
+      summary: Update a template
+      operationId: updateTemplateById
       parameters:
         - $ref: "#/components/parameters/pathTemplateId"
       requestBody:
@@ -115,18 +121,19 @@ paths:
     delete:
       tags:
         - templates
-      summary: Delete a specific template
+      summary: Archive a template
+      operationId: deleteTemplateById
       parameters:
         - $ref: "#/components/parameters/pathTemplateId"
       responses:
         '202':
-          description: Template marked for archival, will be deleted in 30 days
+          description: Template marked for archival
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '404':
-          description: Template not found under your account
+          description: Template not found
 
   /v0/machines:
     post:
@@ -172,7 +179,7 @@ paths:
   /v0/machines/{machineId}:
     get:
       summary: Retrieve a machine by its ID
-      operationId: getMachine
+      operationId: getMachineById
       tags:
         - machines
       parameters:
@@ -199,7 +206,7 @@ paths:
                     type: string
     put:
       summary: Update a machine by its ID
-      operationId: updateMachine
+      operationId: updateMachineById
       tags:
         - machines
       parameters:
