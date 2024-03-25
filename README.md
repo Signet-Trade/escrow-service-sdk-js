@@ -24,10 +24,10 @@ yarn add @signet-trade/escrow-service-sdk
 ## Usage
 #### Creating an API client
 ```typescript
-import { EscrowServiceV0 } from '@signet-trade/escrow-service-sdk';
+import { EscrowServiceV1 } from '@signet-trade/escrow-service-sdk';
 
 // Create new client with your private access tokens
-const escrowService = new EscrowServiceV0({
+const escrowService = new EscrowServiceV1({
 	SIGNET_ACCESS_KEY: '<my-public-key>',
 	SIGNET_ACCESS_SECRET: '<my-private-key>',
 });

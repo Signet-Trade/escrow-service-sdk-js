@@ -5,15 +5,13 @@ import type { BaseHttpRequest } from './core/BaseHttpRequest';
 import type { OpenAPIConfig } from './core/OpenAPI';
 import { AxiosHttpRequest } from './core/AxiosHttpRequest';
 
-import { TemplatesService } from './services/TemplatesService';
-import { MachinesService } from './services/MachinesService';
+import { EscrowLiquidityService } from './services/EscrowLiquidityService';
 
 type HttpRequestConstructor = new (config: OpenAPIConfig) => BaseHttpRequest;
 
-export class EscrowServiceV0 {
+export class EscrowServiceV1 {
 
-	public readonly templates: TemplatesService;
-	public readonly machines: MachinesService;
+	public readonly escrowLiquidity: EscrowLiquidityService;
 
 	private readonly request: BaseHttpRequest;
 
@@ -26,8 +24,7 @@ export class EscrowServiceV0 {
 			VERBOSE: config?.VERBOSE ?? false
 		});
 
-		this.templates = new TemplatesService(this.request);
-		this.machines = new MachinesService(this.request);
+		this.escrowLiquidity = new EscrowLiquidityService(this.request);
 	}
 }
 

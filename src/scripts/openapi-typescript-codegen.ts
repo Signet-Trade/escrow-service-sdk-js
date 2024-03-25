@@ -4,19 +4,19 @@ import { fileURLToPath } from 'node:url';
 import fs, { open } from 'node:fs/promises';
 
 const currentDirectory = path.dirname(fileURLToPath(import.meta.url));
-const output = path.join(currentDirectory, '../generated/escrow-service-v0');
-const escrowServiceV0: Options = {
-	clientName: 'EscrowServiceV0',
+const output = path.join(currentDirectory, '../generated/escrow-service-v1');
+const escrowServiceV1: Options = {
+	clientName: 'EscrowServiceV1',
 	httpClient: 'axios',
 	indent: 'tab',
-	input: path.join(currentDirectory, '../api/escrow-service.v0.yaml'),
+	input: path.join(currentDirectory, '../api/escrow-service.v1.yaml'),
 	output,
 	useOptions: true,
 	useUnionTypes: true,
 	request: path.join(currentDirectory, 'request.txt'),
 };
 
-await generate(escrowServiceV0);
+await generate(escrowServiceV1);
 
 // FIXME: fork & update openapi-typescript-codegen package to handle these changes
 
@@ -37,10 +37,10 @@ await openApiWrite.writeFile(openApiText, {
 });
 await openApiWrite.close();
 
-// EscrowServiceV0
+// EscrowServiceV1
 // Read without creating a file
 const escrowServiceRead = await open(
-	path.join(currentDirectory, 'EscrowServiceV0.txt'),
+	path.join(currentDirectory, 'EscrowServiceV1.txt'),
 	'r',
 );
 const escrowServiceText = await escrowServiceRead.readFile({
@@ -51,7 +51,7 @@ await escrowServiceRead.close();
 
 // Write
 const escrowServiceWrite = await open(
-	path.join(output, 'EscrowServiceV0.ts'),
+	path.join(output, 'EscrowServiceV1.ts'),
 	'w',
 );
 await escrowServiceWrite.writeFile(escrowServiceText, {

@@ -1,0 +1,536 @@
+openapi: 3.0.3
+info:
+  title: Signet Trade's Escrow Service
+  description: |
+    Describes in detail all the API operations for the Escrow Service. In addition, it provides sample requests, responses, and errors for the supported calls. [JS SDK](https://github.com/Signet-Trade/escrow-service-sdk-js)
+  contact:
+    name: Signet Trade
+    url: https://www.signet.trade/contact
+    email: partners@signet.trade
+  license:
+    name: "Apache 2.0"
+  version: 1.0.0
+servers:
+  - url: "https://api.signet.trade"
+security:
+  - signetAccessKey: []
+    signetAccessSignature: []
+    signetAccessTimestamp: []
+tags:
+  - name: escrowLiquidity
+    description: Manage Liquidity Escrow Requests
+  - name: MVP+
+    description: Post-MVP APIs
+paths:
+  /v1/liquidity:
+    post:
+      summary: Create Liquidity Escrow
+      description: |
+        Creates a new liquidity escrow. This includes details like ownership, contribution limits, presale percentages, and more.
+      operationId: createLiquidityEscrow
+      tags:
+        - escrowLiquidity
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - "contributor"
+                - "expiration"
+                - "pool"
+              properties:
+                expiration:
+                  type: object
+                  description: Escrow time period
+                  properties:
+                    startTime:
+                      type: string
+                      format: date-time
+                    endTime:
+                      type: string
+                      format: date-time
+                contributor:
+                  type: object
+                  properties:
+                    minimum:
+                      type: number
+                      format: float
+                      description: Minimum contribution amount
+                    maximum:
+                      type: number
+                      format: float
+                      description: Maximum contribution amount
+                    softCap:
+                      type: number
+                      description: Cap for the presale to succeed
+                    hardCap:
+                      type: number
+                      description: Cap for the presale to end
+                pool:
+                  type: object
+                  properties:
+                    percentPresaleAirdrop:
+                      type: number
+                      description: Percentage of presale for airdrop
+                    percentLP:
+                      type: number
+                      description: Percentage for liquidity pool
+                    percentFounderShare:
+                      type: number
+                      description: Percentage share for the founder
+                    mintDetails:
+                      $ref: "#/components/schemas/MintDetails"
+                  required:
+                    - "percentPresaleAirdrop"
+                    - "percentLP"
+                    - "percentFounderShare"
+                    - "mintDetails"
+              additionalProperties: false
+      responses:
+        "201":
+          description: Liquidity escrow created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - escrowId
+                properties:
+                  escrowId:
+                    $ref: "#/components/schemas/objectId"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /v1/liquidity/{escrowId}:
+    get:
+      summary: Get Liquidity Escrow
+      description: |
+        Retrieves details of a specific liquidity escrow identified by the escrow ID.
+      operationId: getLiquidityEscrow
+      tags:
+        - escrowLiquidity
+      parameters:
+        - $ref: "#/components/parameters/EscrowId"
+      responses:
+        "200":
+          description: Liquidity escrow details
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - "escrowId"
+                  - "expiration"
+                  - "contributor"
+                  - "pool"
+                properties:
+                  escrowId:
+                    $ref: "#/components/schemas/objectId"
+                  expiration:
+                    type: object
+                    description: Escrow time period
+                    properties:
+                      startTime:
+                        type: string
+                        format: date-time
+                      endTime:
+                        type: string
+                        format: date-time
+                  contributor:
+                    type: object
+                    properties:
+                      minimum:
+                        type: number
+                        format: float
+                        description: Minimum contribution amount
+                      maximum:
+                        type: number
+                        format: float
+                        description: Maximum contribution amount
+                      softCap:
+                        type: number
+                        description: Cap for the presale to succeed
+                      hardCap:
+                        type: number
+                        description: Cap for the presale to end
+                  pool:
+                    type: object
+                    properties:
+                      percentPresaleAirdrop:
+                        type: number
+                        description: Percentage of presale for airdrop
+                      percentLP:
+                        type: number
+                        description: Percentage for liquidity pool
+                      percentFounderShare:
+                        type: number
+                        description: Percentage share for the founder
+                      mintDetails:
+                        $ref: "#/components/schemas/MintDetails"
+                    required:
+                      - "percentPresaleAirdrop"
+                      - "percentLP"
+                      - "percentFounderShare"
+                      - "mintDetails"
+                additionalProperties: false
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/EscrowNotFound"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /v1/liquidity/{escrowId}/claim:
+    post:
+      summary: Claim Founder's Funds
+      description: |
+        Allows the claiming of founder share from a specific escrow.
+      operationId: claimLiquidityRaise
+      tags:
+        - escrowLiquidity
+      parameters:
+        - $ref: "#/components/parameters/EscrowId"
+      requestBody:
+        $ref: "#/components/requestBodies/Auth"
+      responses:
+        "202":
+          description: Claim request received successfully
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/EscrowNotFound"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /v1/liquidity/{escrowId}/{walletAddress}:
+    get:
+      summary: Get User's Contribution
+      description: |
+        Retrieves the liquidity contribution details for a given wallet address in a specific liquidity escrow.
+      operationId: getLiquidityContribution
+      tags:
+        - escrowLiquidity
+      parameters:
+        - $ref: "#/components/parameters/EscrowId"
+        - $ref: "#/components/parameters/WalletAddress"
+      responses:
+        "200":
+          $ref: "#/components/responses/LiquidityContributionResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/EscrowNotFound"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/ServerError"
+    post:
+      summary: Refund User's Contribution
+      description: |
+        Processes a refund for a user's contribution in a specific liquidity escrow. This includes verifying wallet authenticity and checking if the escrow exists.
+      operationId: refundLiquidityContribution
+      tags:
+        - escrowLiquidity
+      parameters:
+        - $ref: "#/components/parameters/EscrowId"
+        - $ref: "#/components/parameters/WalletAddress"
+      requestBody:
+        $ref: "#/components/requestBodies/Auth"
+      responses:
+        "202":
+          description: Refund request received successfully
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/EscrowNotFound"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/ServerError"
+  /v1/liquidity/{escrowId}/bind:
+    post:
+      summary: Bind a wallet address from one blockchain to another.
+      description: >
+        Allows users to bind their wallet address from one blockchain (e.g., TRON) to another (e.g., SOL) 
+        for contribution reward claiming. The user must authenticate ownership of the USDT address, 
+        while the SOL address is used as a claim address without authentication.
+      operationId: bindWalletAddress
+      tags:
+        - MVP+
+      parameters:
+        - $ref: "#/components/parameters/EscrowId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                usdtAddress:
+                  type: string
+                  description: USDT address of the user, with authentication to prove ownership.
+                  example: "TExxxxxxx"
+                solAddress:
+                  type: string
+                  description: SOL address to which rewards are claimed.
+                  example: "SOLxxxxxxx"
+      responses:
+        "200":
+          description: Successfully bound wallet addresses.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Wallet addresses bound successfully."
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/EscrowNotFound"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/ServerError"
+components:
+  parameters:
+    EscrowId:
+      in: path
+      name: "escrowId"
+      required: true
+      schema:
+        $ref: "#/components/schemas/objectId"
+    WalletAddress:
+      in: path
+      name: walletAddress
+      required: true
+      schema:
+        type: string
+      description: The wallet address for which the contribution details are being requested.
+  
+  requestBodies:
+    Auth:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              auth:
+                $ref: "#/components/schemas/Auth"
+            required:
+              - auth
+
+  responses:
+    LiquidityContributionResponse:
+      description: Liquidity contribution details retrieved successfully
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - "escrowId"
+              - "walletAddress"
+              - "contribution"
+            properties:
+              escrowId:
+                $ref: "#/components/schemas/objectId"
+              walletAddress:
+                type: string
+                description: The wallet address for which the balance is provided
+              contribution:
+                type: number
+                format: float
+                description: The contribution amount for this escrow provided by the given wallet address
+                example: 1.234567891
+    EscrowNotFound:
+      description: Escrow not found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "Escrow not found"
+    Created:
+      description: Entity created successfully
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+    Success:
+      description: Success response
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: "creating"
+    BadRequest:
+      description: Bad request response
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                description: A description of the error that occurred.
+                example: "Escrow is already complete"
+    Unauthorized:
+      description: Unauthorized response
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "User is unauthorized"
+    TooManyRequests:
+      description: Too many requests response
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "Too many requests, please try again in 5 seconds"
+    ServerError:
+      description: Internal server error response
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "Internal Server Error"
+
+  schemas:
+    MintDetails:
+      type: object
+      oneOf:
+        - $ref: "#/components/schemas/MintExistingDetails"
+        - $ref: "#/components/schemas/MintCreationDetails"
+    MintExistingDetails:
+      type: object
+      description: Mint Details
+      properties:
+        contractAddress:
+          type: string
+          description: Contract Address
+        network:
+          type: string
+          description: Network that this contract is on
+          example: "solana"
+        escrowedTokens:
+          type: number
+          format: float
+          description: Total amount of tokens that will be escrowed
+          example: 1.234567891
+      required:
+        - "contractAddress"
+        - "network"
+        - "escrowedTokens"
+    MintCreationDetails:
+      type: object
+      description: "[MVP++] Mint Creation Details"
+      properties:
+        network:
+          type: string
+          description: Network that this contract is on
+          example: "solana"
+        escrowedTokens:
+          type: number
+          format: float
+          description: Total amount of tokens that will be escrowed
+          example: 1.234567891
+        details:
+          type: object
+      required:
+        - "network"
+        - "escrowedTokens"
+        - "details"
+    objectId:
+      type: string
+      pattern: "^[0-9a-f]{24}$"
+      minLength: 24
+      maxLength: 24
+      example: 6463b2745c41b4fac0387d0f
+      description: MongoDB Object Identifier
+    Auth:
+      type: object
+      required:
+        - signedMessage
+        - signature
+        - walletAddress
+      properties:
+        signedMessage:
+          type: string
+          format: byte
+          description: Signed message as a Uint8Array
+        signature:
+          type: string
+          format: byte
+          description: Signature as a Uint8Array
+        walletAddress:
+          type: string
+          description: Wallet address associated with the request
+  securitySchemes:
+    signetAccessKey:
+      type: apiKey
+      in: header
+      name: X-Signet-Access-Key
+      description: |
+        Handled automatically by Signet Trade's SDKs
+        ===
+        Public API key as string
+    signetAccessSignature:
+      type: apiKey
+      name: X-Signet-Access-Signature
+      in: header
+      description: |
+        Handled automatically by Signet Trade's SDKs
+        ===
+        User Generated HMAC SHA-256 Message Signature using your API Secret
+        ### Shape of message to sign
+        - With a body: `${timestampHeader}${req.method.toUpperCase()}${req.path}${JSON.stringify(req.body)}`
+        - Without a body `${timestampHeader}${req.method.toUpperCase()}${req.path}`
+        ### NodeJS HMAC Example:
+        - `const signature = createHmac('sha256', signetApiSecret).update(message).digest('hex');`
+    signetAccessTimestamp:
+      type: apiKey
+      in: header
+      name: X-Signet-Access-Timestamp
+      description: |
+        Handled automatically by Signet Trade's SDKs
+        ===
+        Number of seconds since Unix Epoch in UTC

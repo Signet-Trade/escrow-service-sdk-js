@@ -1,1 +1,1 @@
-export * from './generated/escrow-service-v0/index.js';
+export * from './generated/escrow-service-v1/index.js';
