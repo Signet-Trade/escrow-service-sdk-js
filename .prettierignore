@@ -8,10 +8,3 @@ coverage
 # Build
 dist
 package.json
-
-# Yarn 2
-.pnp.cjs
-.pnp.loader.mjs
-.yarn
-.yarnrc.yml
-yarn.lock

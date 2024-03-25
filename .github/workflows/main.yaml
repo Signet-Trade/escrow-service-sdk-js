@@ -11,17 +11,16 @@ jobs:
   build_publish:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: '18.x'
+          node-version: '20.x'
           scope: '@signet-trade'
           registry-url: 'https://registry.npmjs.org'
-      - run: npm i --location=global yarn
       - run: |
-          yarn
-          yarn codegen
-          yarn build
+          npm i
+          npm run codegen
+          npm run build
           npm pkg set scripts.postinstall="echo no-postinstall"
           npm publish
         env:

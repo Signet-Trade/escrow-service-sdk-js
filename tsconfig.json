@@ -1,6 +1,8 @@
 {
-	"extends": "@tsconfig/node16-strictest-esm/tsconfig.json",
+	"extends": "@tsconfig/node20",
 	"compilerOptions": {
+		"module": "ESNext",
+		"moduleResolution": "Node",
 		"allowSyntheticDefaultImports": true, // openapi-typescript-codegen enabler
 		"lib": [
 			"es2021",

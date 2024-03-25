@@ -13,9 +13,12 @@ The Signet Trade escrow-service Node SDK provides your JavaScript & TypeScript a
 This library can be used by NodeJS applications, tools, and other automations to access and manage cryptocurrency coins, tokens, and wallets.
 
 ## Installation
-You can install the SDK using npm or yarn
+You can install the SDK using npm/yarn/pnpm
 ```
 npm install @signet-trade/escrow-service-sdk
+```
+```
+pnpm install @signet-trade/escrow-service-sdk
 ```
 ```
 yarn add @signet-trade/escrow-service-sdk
@@ -30,33 +33,5 @@ import { EscrowServiceV1 } from '@signet-trade/escrow-service-sdk';
 const escrowService = new EscrowServiceV1({
 	SIGNET_ACCESS_KEY: '<my-public-key>',
 	SIGNET_ACCESS_SECRET: '<my-private-key>',
-});
-```
-
-#### Validate Wallet Address
-```typescript
-const responseData = await escrowService.direct.validateWallet({
-	cryptoName: 'noso',
-	walletAddress: '1F1tAaz5x1HUXrCNLbtMDqcw6o5GNn4xqX'
-});
-```
-
-#### Create Condition
-```typescript
-const responseData = escrowService.escrow.createEscrow({
-	condition: 'payment_processor',
-	endpoint: 'https://example.com', // OPTIONAL Status Notification
-	params: {
-		amount: '100',
-		cryptoName: 'noso',
-		walletAddress: '1F1tAaz5x1HUXrCNLbtMDqcw6o5GNn4xqX',
-	},
-});
-```
-
-#### Get Status
-```typescript
-const responseData = escrowService.escrow.getStatus({
-	escrowId: 'da93bbdf-14c7-4a4c-a24f-6501143dc84a',
 });
 ```
