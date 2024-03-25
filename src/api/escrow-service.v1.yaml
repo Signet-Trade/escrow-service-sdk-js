@@ -96,10 +96,31 @@ paths:
               schema:
                 type: object
                 required:
-                  - escrowId
+                  - "escrowId"
+                  - "escrowWalletAddresses"
                 properties:
                   escrowId:
                     $ref: "#/components/schemas/objectId"
+                  escrowWalletAddresses:
+                    type: object
+                    properties:
+                      ethereum:
+                        type: string
+                        description: "[MVP+] Signet Trade's Wallet Address For This Escrow"
+                      bitcoin:
+                        type: string
+                        description: "[MVP+] Signet Trade's Wallet Address For This Escrow"
+                      litecoin:
+                        type: string
+                        description: "[MVP+] Signet Trade's Wallet Address For This Escrow"
+                      solana:
+                        type: string
+                        description: "Signet Trade's Wallet Address For This Escrow"
+                    required:
+                      - "ethereum"
+                      - "bitcoin"
+                      - "litecoin"
+                      - "solana"
         "400":
           $ref: "#/components/responses/BadRequest"
         "401":
@@ -127,12 +148,33 @@ paths:
                 type: object
                 required:
                   - "escrowId"
+                  - "escrowWalletAddresses"
                   - "expiration"
                   - "contributor"
                   - "pool"
                 properties:
                   escrowId:
                     $ref: "#/components/schemas/objectId"
+                  escrowWalletAddresses:
+                    type: object
+                    properties:
+                      ethereum:
+                        type: string
+                        description: "[MVP+] Signet Trade's Wallet Address For This Escrow"
+                      bitcoin:
+                        type: string
+                        description: "[MVP+] Signet Trade's Wallet Address For This Escrow"
+                      litecoin:
+                        type: string
+                        description: "[MVP+] Signet Trade's Wallet Address For This Escrow"
+                      solana:
+                        type: string
+                        description: "Signet Trade's Wallet Address For This Escrow"
+                    required:
+                      - "ethereum"
+                      - "bitcoin"
+                      - "litecoin"
+                      - "solana"
                   expiration:
                     type: object
                     description: Escrow time period
