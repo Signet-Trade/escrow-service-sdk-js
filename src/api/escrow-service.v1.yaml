@@ -17,10 +17,8 @@ security:
     signetAccessSignature: []
     signetAccessTimestamp: []
 tags:
-  - name: escrowLiquidity
+  - name: escrowTokenPresaleWithLiquidity
     description: Manage Liquidity Escrow Requests
-  - name: MVP+
-    description: Post-MVP APIs
   - name: escrowOverTheCounter
     description: Manage Over The Counter Escrow Requests
   - name: wallet
@@ -33,7 +31,7 @@ paths:
         Creates a new liquidity escrow. This includes details like ownership, contribution limits, presale percentages, and more.
       operationId: createLiquidityEscrow
       tags:
-        - escrowLiquidity
+        - escrowTokenPresaleWithLiquidity
       requestBody:
         required: true
         content:
@@ -110,13 +108,13 @@ paths:
                     properties:
                       ethereum:
                         type: string
-                        description: "[MVP+] Signet Trade's Wallet Address For This Escrow"
+                        description: "[escrowTokenPresaleWithLiquidity] Signet Trade's Wallet Address For This Escrow"
                       bitcoin:
                         type: string
-                        description: "[MVP+] Signet Trade's Wallet Address For This Escrow"
+                        description: "[escrowTokenPresaleWithLiquidity] Signet Trade's Wallet Address For This Escrow"
                       litecoin:
                         type: string
-                        description: "[MVP+] Signet Trade's Wallet Address For This Escrow"
+                        description: "[escrowTokenPresaleWithLiquidity] Signet Trade's Wallet Address For This Escrow"
                       solana:
                         type: string
                         description: "Signet Trade's Wallet Address For This Escrow"
@@ -140,7 +138,7 @@ paths:
         Retrieves details of a specific liquidity escrow identified by the escrow ID.
       operationId: getLiquidityEscrow
       tags:
-        - escrowLiquidity
+        - escrowTokenPresaleWithLiquidity
       parameters:
         - $ref: "#/components/parameters/EscrowId"
       responses:
@@ -164,13 +162,13 @@ paths:
                     properties:
                       ethereum:
                         type: string
-                        description: "[MVP+] Signet Trade's Wallet Address For This Escrow"
+                        description: "[escrowTokenPresaleWithLiquidity] Signet Trade's Wallet Address For This Escrow"
                       bitcoin:
                         type: string
-                        description: "[MVP+] Signet Trade's Wallet Address For This Escrow"
+                        description: "[escrowTokenPresaleWithLiquidity] Signet Trade's Wallet Address For This Escrow"
                       litecoin:
                         type: string
-                        description: "[MVP+] Signet Trade's Wallet Address For This Escrow"
+                        description: "[escrowTokenPresaleWithLiquidity] Signet Trade's Wallet Address For This Escrow"
                       solana:
                         type: string
                         description: "Signet Trade's Wallet Address For This Escrow"
@@ -243,7 +241,7 @@ paths:
         Allows the claiming of founder share from a specific escrow.
       operationId: claimLiquidityRaise
       tags:
-        - escrowLiquidity
+        - escrowTokenPresaleWithLiquidity
       parameters:
         - $ref: "#/components/parameters/EscrowId"
       requestBody:
@@ -268,7 +266,7 @@ paths:
         Retrieves the liquidity contribution details for a given wallet address in a specific liquidity escrow.
       operationId: getLiquidityContribution
       tags:
-        - escrowLiquidity
+        - escrowTokenPresaleWithLiquidity
       parameters:
         - $ref: "#/components/parameters/EscrowId"
         - $ref: "#/components/parameters/WalletAddress"
@@ -291,7 +289,7 @@ paths:
         Processes a refund for a user's contribution in a specific liquidity escrow. This includes verifying wallet authenticity and checking if the escrow exists.
       operationId: refundLiquidityContribution
       tags:
-        - escrowLiquidity
+        - escrowTokenPresaleWithLiquidity
       parameters:
         - $ref: "#/components/parameters/EscrowId"
         - $ref: "#/components/parameters/WalletAddress"
@@ -319,7 +317,7 @@ paths:
         while the SOL address is used as a claim address without authentication.
       operationId: bindWalletAddress
       tags:
-        - MVP+
+        - escrowTokenPresaleWithLiquidity
       parameters:
         - $ref: "#/components/parameters/EscrowId"
       requestBody:
@@ -726,7 +724,7 @@ components:
         - "escrowedTokens"
     MintCreationDetails:
       type: object
-      description: "[MVP++] Mint Creation Details"
+      description: "[escrowTokenPresaleWithLiquidity+] Mint Creation Details"
       properties:
         network:
           type: string

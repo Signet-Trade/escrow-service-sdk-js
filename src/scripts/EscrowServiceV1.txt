@@ -5,14 +5,14 @@ import type { BaseHttpRequest } from './core/BaseHttpRequest';
 import type { OpenAPIConfig } from './core/OpenAPI';
 import { AxiosHttpRequest } from './core/AxiosHttpRequest';
 
-import { EscrowLiquidityService } from './services/EscrowLiquidityService';
+import { EscrowTokenPresaleWithLiquidityService } from './services/EscrowTokenPresaleWithLiquidityService';
 import { EscrowOverTheCounterService } from './services/EscrowOverTheCounterService';
 import { WalletService } from './services/WalletService';
 
 type HttpRequestConstructor = new (config: OpenAPIConfig) => BaseHttpRequest;
 
 export class EscrowServiceV1 {
-	public readonly escrowLiquidity: EscrowLiquidityService;
+	public readonly escrowTokenPresale: EscrowTokenPresaleWithLiquidityService;
 	public readonly escrowOverTheCounter: EscrowOverTheCounterService;
 	public readonly wallet: WalletService;
 
@@ -30,7 +30,9 @@ export class EscrowServiceV1 {
 			VERBOSE: config?.VERBOSE ?? false,
 		});
 
-		this.escrowLiquidity = new EscrowLiquidityService(this.request);
+		this.escrowTokenPresale = new EscrowTokenPresaleWithLiquidityService(
+			this.request,
+		);
 		this.escrowOverTheCounter = new EscrowOverTheCounterService(
 			this.request,
 		);
