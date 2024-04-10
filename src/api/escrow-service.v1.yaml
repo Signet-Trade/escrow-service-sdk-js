@@ -424,7 +424,6 @@ paths:
               schema:
                 oneOf:
                   - $ref: "#/components/schemas/OverTheCounterFullResponse"
-                  # - $ref: '#/components/schemas/PaymentProcessorResponse' # TODO: FULL RESPONSE
         "400":
           $ref: "#/components/responses/BadRequest"
         "401":
@@ -964,68 +963,20 @@ components:
           $ref: "#/components/schemas/ObjectId"
         status:
           $ref: "#/components/schemas/status"
-        originatingTradeId:
-          type: string
-          description: Originating Trade Identifier
         buying:
           type: object
           required:
             - amount
-            - amountReceived
-            - calderaStartingBalance
-            - calderaWalletAddress
-            - isFullyReceived
             - name
-            - providerId
-            - providerName
-            - providerWalletAddress
             - receiverWalletAddress
-            - transactionConfirmations
             - transactionId
-            - userSource
-            - userChannel
-            - requestedRefund
           properties:
             amount:
               type: string
               description: The transaction amount to be received by the user `new BigNumber().toString()`
               example: "0.000001"
-            amountReceived:
-              type: string
-              description: The transaction amount Caldera has received `new BigNumber().toString()`
-              example: "0.000001"
-            isFullyReceived:
-              type: boolean
-              description: Has Caldera fully received crypto from the provider?
-              example: false
-            calderaStartingBalance:
-              type: string
-              description: The starting balance of this Caldera Wallet `new BigNumber().toString()`
-              example: "0.000001"
-            calderaWalletAddress:
-              description: Caldera receive wallet address
-              type: string
-              example: "0x1111111111111111111111111111111111111111"
-              pattern: "^[a-zA-Z0-9.:-]+$"
-              maxLength: 256 # What is maximum length of a wallet?
-              minLength: 5 # What is minimum length of a wallet?
             name:
               $ref: "#/components/schemas/CryptoCurrencyList"
-            providerId:
-              type: string
-              description: Provider User ID (Telegram or Discord User Identifier)
-              example: "1234567890"
-            providerName:
-              type: string
-              description: Provider User Name
-              example: "echo"
-            providerWalletAddress:
-              description: refund address for user
-              type: string
-              example: "0x1111111111111111111111111111111111111111"
-              pattern: "^[a-zA-Z0-9.:-]+$"
-              maxLength: 256 # What is maximum length of a wallet?
-              minLength: 5 # What is minimum length of a wallet?
             receiverWalletAddress:
               description: receive address for user
               type: string
@@ -1033,40 +984,21 @@ components:
               pattern: "^[a-zA-Z0-9.:-]+$"
               maxLength: 256 # What is maximum length of a wallet?
               minLength: 5 # What is minimum length of a wallet?
-            transactionConfirmations:
-              type: number
-              example: 0
-              pattern: "^[0-9]+$"
             transactionId:
               type: string
               pattern: "^[a-zA-Z0-9]+$"
               maxLength: 512
               minLength: 1
-            userSource:
-              type: string
-              enum: ["website"]
-            userChannel:
-              type: string
-            requestedRefund:
-              type: boolean
         selling:
           type: object
           required:
             - amount
             - amountReceived
-            - calderaStartingBalance
-            - calderaWalletAddress
             - isFullyReceived
+            - signetWalletAddress
             - name
-            - providerId
-            - providerName
             - providerWalletAddress
-            - receiverWalletAddress
-            - transactionConfirmations
             - transactionId
-            - userSource
-            - userChannel
-            - requestedRefund
           properties:
             amount:
               type: string
@@ -1080,11 +1012,7 @@ components:
               type: boolean
               description: Has Caldera fully received crypto from the provider?
               example: false
-            calderaStartingBalance:
-              type: string
-              description: The starting balance of this Caldera Wallet `new BigNumber().toString()`
-              example: "0.000001"
-            calderaWalletAddress:
+            signetWalletAddress:
               description: Caldera receive wallet address
               type: string
               example: "0x1111111111111111111111111111111111111111"
@@ -1093,14 +1021,6 @@ components:
               minLength: 5 # What is minimum length of a wallet?
             name:
               $ref: "#/components/schemas/CryptoCurrencyList"
-            providerId:
-              type: string
-              description: Provider User ID (Telegram or Discord User Identifier)
-              example: "1234567890"
-            providerName:
-              type: string
-              description: Provider User Name
-              example: "echo"
             providerWalletAddress:
               description: refund address for user
               type: string
@@ -1108,27 +1028,11 @@ components:
               pattern: "^[a-zA-Z0-9.:-]+$"
               maxLength: 256 # What is maximum length of a wallet?
               minLength: 5 # What is minimum length of a wallet?
-            receiverWalletAddress:
-              description: receive address for user
-              type: string
-              example: "0x1111111111111111111111111111111111111111"
-              pattern: "^[a-zA-Z0-9.:-]+$"
-              maxLength: 256 # What is maximum length of a wallet?
-              minLength: 5 # What is minimum length of a wallet?
-            transactionConfirmations:
-              type: number
-              example: 0
-              pattern: "^[0-9]+$"
             transactionId:
               type: string
               pattern: "^[a-zA-Z0-9]+$"
               maxLength: 512
               minLength: 1
-            userSource:
-              type: string
-              enum: ["website"]
-            userChannel:
-              type: string
             requestedRefund:
               type: boolean
     CryptoCurrencyList:
