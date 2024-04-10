@@ -1,7 +1,7 @@
 {
 	"name": "@signet-trade/escrow-service-sdk",
 	"description": "Node SDK for Signet Trade's Escrow Service",
-	"version": "1.0.6",
+	"version": "1.0.7",
 	"author": {
 		"name": "Signet Trade",
 		"url": "https://signet.trade/"
