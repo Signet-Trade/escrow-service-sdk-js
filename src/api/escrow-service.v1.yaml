@@ -23,6 +23,8 @@ tags:
     description: Manage Over The Counter Escrow Requests
   - name: wallet
     description: Wallet Utils
+  - name: user
+    description: User Utils
 paths:
   /v1/liquidity:
     post:
@@ -358,30 +360,54 @@ paths:
           $ref: "#/components/responses/ServerError"
 
   # WIP, is mostly copied from v0
-  /v1/escrow:
+  /v1/otc:
+    get:
+      tags:
+        - escrowOverTheCounter
+      summary: Get all OTC order book listings
+      description: Get all OTC order book listing
+      operationId: getOrderBook
+      parameters:
+        - $ref: "#/components/parameters/buyName"
+        - $ref: "#/components/parameters/sellName"
+        - $ref: "#/components/parameters/userId"
+      responses:
+        "200":
+          description: Fetched escrow listings successfully
+          content:
+            application/json:
+              schema:
+                type: "array"
+                items:
+                  $ref: "#/components/schemas/OverTheCounterListing"
+                maxItems: 1000
+                minItems: 0
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
     post:
       tags:
         - escrowOverTheCounter
-      summary: Create an escrow transaction
+      summary: Create an escrow request
       operationId: createEscrow
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/OverTheCounterCondition"
+              $ref: "#/components/schemas/OverTheCounterRequest"
       responses:
         "201":
-          description: Escrow transaction created successfully
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/OverTheCounterResponse"
+          $ref: "#/components/responses/OverTheCounterResponse"
         "400":
           $ref: "#/components/responses/BadRequest"
         "401":
           $ref: "#/components/responses/Unauthorized"
-  /v1/escrow/{escrowId}:
+  /v1/otc/{escrowId}:
+    # deprecated
+    # $ref: "#/components/schemas/OverTheCounterListing"
+
     get:
       tags:
         - escrowOverTheCounter
@@ -422,73 +448,6 @@ paths:
           $ref: "#/components/responses/BadRequest"
         "401":
           $ref: "#/components/responses/Unauthorized"
-  /v1/otc:
-    get:
-      tags:
-        - escrowOverTheCounter
-      summary: Get all OTC trade listings
-      description: Get all OTC trade listing
-      operationId: getTradeListings
-      parameters:
-        - $ref: "#/components/parameters/buyName"
-        - $ref: "#/components/parameters/sellName"
-        - $ref: "#/components/parameters/tradeType"
-        - $ref: "#/components/parameters/userId"
-      responses:
-        "200":
-          description: Fetched trade listings successfully
-          content:
-            application/json:
-              schema:
-                type: "array"
-                items:
-                  $ref: "#/components/schemas/OverTheCounterCreateTradeResponse"
-                maxItems: 1000
-                minItems: 0
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-  /v1/otc/{tradeId}:
-    get:
-      tags:
-        - escrowOverTheCounter
-      summary: Get an OTC trade listing
-      description: Get OTC trade listing
-      operationId: getTradeListingById
-      parameters:
-        - $ref: "#/components/parameters/TradeId"
-      responses:
-        "200":
-          description: Fetched trade listing successfully
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/OverTheCounterCreateTradeResponse"
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-    delete:
-      tags:
-        - escrowOverTheCounter
-      summary: Delete an OTC trade listing
-      description: Delete OTC trade listing
-      operationId: deleteTradeListingById
-      parameters:
-        - $ref: "#/components/parameters/TradeId"
-        - $ref: "#/components/parameters/userIdReq"
-      responses:
-        "200":
-          description: Deleted trade listing successfully
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/OverTheCounterTradeDeleteResponse"
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
   /v1/wallet/{walletAddress}:
     get:
       tags:
@@ -513,6 +472,40 @@ paths:
                     type: boolean
                     description: Provided Wallet Address validation status
                     example: true
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /v1/user/{userId}:
+    get:
+      tags:
+        - user
+      summary: Get last known wallets for user
+      description: Get last known wallets for user
+      operationId: getUser
+      parameters:
+        - $ref: "#/components/parameters/userIdReq"
+        - $ref: "#/components/parameters/JWT"
+      responses:
+        "200":
+          $ref: "#/components/responses/UserInfo"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+    delete:
+      tags:
+        - MVP+
+      summary: Delete last known wallets for user
+      description: Delete last known wallets for user
+      operationId: getUser
+      parameters:
+        - $ref: "#/components/parameters/userIdReq"
+        - $ref: "#/components/parameters/JWT"
+      responses:
+        "201":
+          $ref: "#/components/responses/Success"
         "400":
           $ref: "#/components/responses/BadRequest"
         "401":
@@ -566,15 +559,6 @@ components:
         type: array
         items:
           $ref: "#/components/schemas/CryptoCurrencyList"
-    tradeType:
-      in: query
-      name: tradeType
-      required: false
-      description: Trade Type
-      schema:
-        type: string
-        description: Trade Listing Type
-        enum: ["take-all", "take-some"]
     userId:
       in: query
       name: userId
@@ -586,9 +570,16 @@ components:
       in: query
       name: userId
       required: true
-      description: Trade Owner Id
+      description: User Id
       schema:
         type: string
+    JWT:
+      in: "header"
+      name: "Authorization"
+      required: true
+      description: "Validation that the user is who they claim"
+      schema:
+        type: "string"
 
   requestBodies:
     Auth:
@@ -599,7 +590,7 @@ components:
             type: object
             properties:
               auth:
-                $ref: "#/components/schemas/Auth"
+                $ref: "#/components/schemas/WalletAuth"
             required:
               - auth
 
@@ -696,6 +687,71 @@ components:
                 type: string
                 example: "Internal Server Error"
 
+    OverTheCounterResponse:
+      description: Escrow transaction created successfully
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - escrowId # Maybe orderBookId?
+              - status
+              - selling
+              - buying
+            properties:
+              escrowId: # Maybe orderBookId?
+                $ref: "#/components/schemas/ObjectId"
+              status:
+                $ref: "#/components/schemas/status"
+              selling:
+                type: object
+                required:
+                  - amount
+                  - name
+                  - providerWalletAddress
+                  - userSource
+                  - signetWalletAddress
+                properties:
+                  amount:
+                    type: string
+                    description: The transaction amount to be received by the user `new BigNumber().toString()`
+                    example: "0.000001"
+                  name:
+                    $ref: "#/components/schemas/CryptoCurrencyList"
+                  providerWalletAddress:
+                    description: refund address for user
+                    type: string
+                    example: "0x1111111111111111111111111111111111111111"
+                    pattern: "^[a-zA-Z0-9.:-]+$"
+                    maxLength: 256 # What is maximum length of a wallet?
+                    minLength: 5 # What is minimum length of a wallet?
+                  signetWalletAddress:
+                    type: string
+                    description: Caldera Address to receive buying
+                    example: "0x12345"
+    UserInfo:
+      description: User Info
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties:
+              type: object
+              required:
+                - address
+                - signetAddress
+              properties:
+                address:
+                  type: string
+                signetAddress:
+                  type: string
+            example:
+              solana:
+                address: "4f3c...7b82"
+                signetAddress: "1c2d...3e4f"
+              ethereum:
+                address: "5g6h...7i8j"
+                signetAddress: "8k9l...0m1n"
   schemas:
     MintDetails:
       type: object
@@ -748,7 +804,10 @@ components:
       maxLength: 24
       example: 6463b2745c41b4fac0387d0f
       description: MongoDB Object Identifier
-    Auth:
+    UserId:
+      type: string
+      format: uuid
+    WalletAuth:
       type: object
       required:
         - signedMessage
@@ -766,6 +825,9 @@ components:
         walletAddress:
           type: string
           description: Wallet address associated with the request
+    JWT:
+      description: "Validation that the user is who they claim"
+      type: "string"
 
     # Outdated, but are here to prepare for v1
     status:
@@ -785,191 +847,18 @@ components:
         ]
       description: The status of the escrow transaction
       example: pending
-    OverTheCounterCondition:
-      type: object
-      required:
-        - condition
-        - parameters
-      properties:
-        endpoint:
-          type: string
-          format: uri
-          description: (optional) Endpoint which status updates will be sent
-          example: https://localhost/callback
-        condition:
-          type: string
-          enum: [over_the_counter]
-          description: The condition that must be met to release the escrowed funds
-          example: over_the_counter
-        parameters:
-          type: object
-          description: Additional parameters for the transaction
-          properties:
-            originatingTradeId:
-              type: string
-              description: Originating Trade Identifier
-            tradeType:
-              type: string
-              description: Trade Listing Type
-              enum: ["take-all", "take-some"]
-            cryptoOne:
-              type: object
-              required:
-                - amount
-                - name
-                - providerId
-                - providerName
-                - receiverWalletAddress
-                - userSource
-                - userChannel
-              properties:
-                amount:
-                  type: string
-                  description: The transaction amount to be received by the user `new BigNumber().toString()`
-                  example: "0.000001"
-                name:
-                  $ref: "#/components/schemas/CryptoCurrencyList"
-                providerId:
-                  type: string
-                  description: Provider User ID (Telegram or Discord User Identifier)
-                  example: "1234567890"
-                providerName:
-                  type: string
-                  description: Provider User Name
-                  example: "echo"
-                providerWalletAddress:
-                  description: refund address for user one
-                  type: string
-                  example: "0x1111111111111111111111111111111111111111"
-                  pattern: "^[a-zA-Z0-9.:-]+$"
-                  maxLength: 256 # What is maximum length of a wallet?
-                  minLength: 5 # What is minimum length of a wallet?
-                receiverWalletAddress:
-                  description: receive address for user two
-                  type: string
-                  example: "0x1111111111111111111111111111111111111111"
-                  pattern: "^[a-zA-Z0-9.:-]+$"
-                  maxLength: 256 # What is maximum length of a wallet?
-                  minLength: 5 # What is minimum length of a wallet?
-                userSource:
-                  type: string
-                  enum: ["discord", "website", "telegram", "wechat"]
-                  example: "discord"
-                userChannel:
-                  type: string
-                  example: "1234567890"
-            cryptoTwo:
-              type: object
-              required:
-                - amount
-                - name
-                - providerId
-                - providerName
-                - providerWalletAddress
-                - userSource
-                - userChannel
-              properties:
-                amount:
-                  type: string
-                  description: The transaction amount to be received by the user `new BigNumber().toString()`
-                  example: "0.000001"
-                name:
-                  $ref: "#/components/schemas/CryptoCurrencyList"
-                providerId:
-                  type: string
-                  description: Provider User ID (Telegram or Discord User Identifier)
-                  example: "1234567890"
-                providerName:
-                  type: string
-                  description: Provider User Name
-                  example: "echo"
-                providerWalletAddress:
-                  type: string
-                  example: "0x1111111111111111111111111111111111111111"
-                  pattern: "^[a-zA-Z0-9.:-]+$"
-                  maxLength: 256 # What is maximum length of a wallet?
-                  minLength: 5 # What is minimum length of a wallet?
-                  description: refund address for user two
-                receiverWalletAddress:
-                  description: receive address for user one
-                  type: string
-                  example: "0x1111111111111111111111111111111111111111"
-                  pattern: "^[a-zA-Z0-9.:-]+$"
-                  maxLength: 256 # What is maximum length of a wallet?
-                  minLength: 5 # What is minimum length of a wallet?
-                userSource:
-                  type: string
-                  enum: ["discord", "website", "telegram", "wechat"]
-                  example: "discord"
-                userChannel:
-                  type: string
-                  example: "1234567890"
-          required:
-            - tradeType
-            - originatingTradeId
-            - cryptoOne
-            - cryptoTwo
-    OverTheCounterTradeDeleteResponse:
+    OverTheCounterRequest:
       type: object
       properties:
-        tradeId:
-          $ref: "#/components/schemas/ObjectId"
-        status:
-          $ref: "#/components/schemas/status"
-    OverTheCounterCreateTradeResponse:
-      type: object
-      required:
-        - tradeId
-        - cryptoOne
-        - cryptoTwo
-        - tradeType
-        - traders
-      properties:
-        tradeId:
-          $ref: "#/components/schemas/ObjectId"
-        cryptoOne:
-          type: object
-          required:
-            - amount
-            - name
-            - providerId
-            - providerWalletAddress
-            - providerName
-            - userSource
-            - userChannel
-          properties:
-            amount:
-              type: string
-              description: The transaction amount to be received by the user `new BigNumber().toString()`
-              example: "0.000001"
-            name:
-              $ref: "#/components/schemas/CryptoCurrencyList"
-            providerId:
-              type: string
-              description: Provider User ID (Telegram or Discord User Identifier)
-              example: "1234567890"
-            providerName:
-              type: string
-              description: Provider User Name
-              example: "echo"
-            providerWalletAddress:
-              description: refund address for user one
-              type: string
-              example: "0x1111111111111111111111111111111111111111"
-              pattern: "^[a-zA-Z0-9.:-]+$"
-              maxLength: 256 # What is maximum length of a wallet?
-              minLength: 5 # What is minimum length of a wallet?
-            userSource:
-              type: string
-              enum: ["discord", "website", "telegram", "wechat"]
-            userChannel:
-              type: string
-        cryptoTwo:
+        auth:
+          $ref: "#/components/schemas/JWT"
+        buying:
           type: object
           required:
             - amount
             - name
             - receiverWalletAddress
+            - userSource
           properties:
             amount:
               type: string
@@ -978,55 +867,98 @@ components:
             name:
               $ref: "#/components/schemas/CryptoCurrencyList"
             receiverWalletAddress:
-              description: receive address for user one
+              description: receive address for user
               type: string
               example: "0x1111111111111111111111111111111111111111"
               pattern: "^[a-zA-Z0-9.:-]+$"
               maxLength: 256 # What is maximum length of a wallet?
               minLength: 5 # What is minimum length of a wallet?
-        tradeType:
-          type: string
-          description: Trade Listing Type
-          enum: ["take-all", "take-some"]
-        traders:
-          type: array
-          minItems: 0
-          items:
-            type: string
-          maxItems: 128
-    OverTheCounterResponse:
-      type: object
+            userSource:
+              type: string
+              enum: ["website"]
+              example: "website"
+        selling:
+          type: object
+          required:
+            - amount
+            - name
+            - providerWalletAddress
+            - userSource
+          properties:
+            amount:
+              type: string
+              description: The transaction amount to be received by the user `new BigNumber().toString()`
+              example: "0.000001"
+            name:
+              $ref: "#/components/schemas/CryptoCurrencyList"
+            providerWalletAddress:
+              description: refund address for user
+              type: string
+              example: "0x1111111111111111111111111111111111111111"
+              pattern: "^[a-zA-Z0-9.:-]+$"
+              maxLength: 256 # What is maximum length of a wallet?
+              minLength: 5 # What is minimum length of a wallet?
+            userSource:
+              type: string
+              enum: ["website"]
+              example: "website"
       required:
-        - escrowId
-        - condition
-        - status
-        - calderaWalletAddressCryptoOne
-        - calderaWalletAddressCryptoTwo
+        - auth
+        - buying
+        - selling
+    OverTheCounterTradeDeleteResponse:
+      type: object
       properties:
         escrowId:
           $ref: "#/components/schemas/ObjectId"
-        condition:
-          type: string
-          enum: [over_the_counter]
-          description: The condition that must be met to release the escrowed funds
-          example: over_the_counter
         status:
           $ref: "#/components/schemas/status"
-        calderaWalletAddressCryptoOne:
-          type: string
-          description: Caldera Address to receive CryptoOne
-          example: "0x12345"
-        calderaWalletAddressCryptoTwo:
-          type: string
-          description: Caldera Address to receive CryptoTwo
-          example: "0x12345"
+    OverTheCounterListing:
+      type: object
+      required:
+        - escrowId
+        - owner
+        - status
+        - selling
+        - buying
+      properties:
+        escrowId:
+          $ref: "#/components/schemas/ObjectId"
+        owner:
+          $ref: "#/components/schemas/UserId"
+        status:
+          $ref: "#/components/schemas/status"
+        selling:
+          type: object
+          required:
+            - amount
+            - name
+          properties:
+            amount:
+              type: string
+              description: The transaction amount to be received by the user `new BigNumber().toString()`
+              example: "0.000001"
+            name:
+              $ref: "#/components/schemas/CryptoCurrencyList"
+        buying:
+          type: object
+          required:
+            - amount
+            - name
+          properties:
+            amount:
+              type: string
+              description: The transaction amount to be received by the user `new BigNumber().toString()`
+              example: "0.000001"
+            name:
+              $ref: "#/components/schemas/CryptoCurrencyList"
     OverTheCounterFullResponse:
       type: object
       required:
         - status
         - escrowId
-        - cryptoOne
-        - cryptoTwo
+        - buying
+        - selling
       properties:
         escrowId:
           $ref: "#/components/schemas/ObjectId"
@@ -1035,11 +967,7 @@ components:
         originatingTradeId:
           type: string
           description: Originating Trade Identifier
-        tradeType:
-          type: string
-          description: Trade Listing Type
-          enum: ["take-all", "take-some"]
-        cryptoOne:
+        buying:
           type: object
           required:
             - amount
@@ -1092,14 +1020,14 @@ components:
               description: Provider User Name
               example: "echo"
             providerWalletAddress:
-              description: refund address for user one
+              description: refund address for user
               type: string
               example: "0x1111111111111111111111111111111111111111"
               pattern: "^[a-zA-Z0-9.:-]+$"
               maxLength: 256 # What is maximum length of a wallet?
               minLength: 5 # What is minimum length of a wallet?
             receiverWalletAddress:
-              description: receive address for user two
+              description: receive address for user
               type: string
               example: "0x1111111111111111111111111111111111111111"
               pattern: "^[a-zA-Z0-9.:-]+$"
@@ -1116,12 +1044,12 @@ components:
               minLength: 1
             userSource:
               type: string
-              enum: ["discord", "website", "telegram", "wechat"]
+              enum: ["website"]
             userChannel:
               type: string
             requestedRefund:
               type: boolean
-        cryptoTwo:
+        selling:
           type: object
           required:
             - amount
@@ -1174,14 +1102,14 @@ components:
               description: Provider User Name
               example: "echo"
             providerWalletAddress:
-              description: refund address for user two
+              description: refund address for user
               type: string
               example: "0x1111111111111111111111111111111111111111"
               pattern: "^[a-zA-Z0-9.:-]+$"
               maxLength: 256 # What is maximum length of a wallet?
               minLength: 5 # What is minimum length of a wallet?
             receiverWalletAddress:
-              description: receive address for user one
+              description: receive address for user
               type: string
               example: "0x1111111111111111111111111111111111111111"
               pattern: "^[a-zA-Z0-9.:-]+$"
@@ -1198,7 +1126,7 @@ components:
               minLength: 1
             userSource:
               type: string
-              enum: ["discord", "website", "telegram", "wechat"]
+              enum: ["website"]
             userChannel:
               type: string
             requestedRefund:
@@ -1212,15 +1140,9 @@ components:
     DeleteResponse:
       additionalProperties: false
       required:
-        - condition
         - escrowId
         - status
       properties:
-        condition:
-          type: string
-          enum: [over_the_counter, payment_processor, custom_condition]
-          description: The condition that must be met to release the escrowed funds
-          example: over_the_counter
         escrowId:
           $ref: "#/components/schemas/ObjectId"
         status:
