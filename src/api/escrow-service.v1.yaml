@@ -503,7 +503,7 @@ paths:
       operationId: getUser
       parameters:
         - $ref: "#/components/parameters/userIdReq"
-        - $ref: "#/components/parameters/JWT"
+        - $ref: "#/components/parameters/Authorization"
       responses:
         "200":
           $ref: "#/components/responses/UserInfo"
@@ -519,7 +519,7 @@ paths:
       operationId: getUser
       parameters:
         - $ref: "#/components/parameters/userIdReq"
-        - $ref: "#/components/parameters/JWT"
+        - $ref: "#/components/parameters/Authorization"
       responses:
         "201":
           $ref: "#/components/responses/Success"
@@ -590,7 +590,7 @@ components:
       description: User Id
       schema:
         type: string
-    JWT:
+    Authorization:
       in: "header"
       name: "Authorization"
       required: true
@@ -831,7 +831,7 @@ components:
       maxLength: 24
       example: 6463b2745c41b4fac0387d0f
       description: MongoDB Object Identifier
-    UserId:
+    Owner:
       type: string
       format: uuid
     WalletAuth:
@@ -952,7 +952,7 @@ components:
         escrowId:
           $ref: "#/components/schemas/ObjectId"
         owner:
-          $ref: "#/components/schemas/UserId"
+          $ref: "#/components/schemas/Owner"
         status:
           $ref: "#/components/schemas/status"
         selling:
@@ -993,7 +993,7 @@ components:
         status:
           $ref: "#/components/schemas/status"
         owner:
-          $ref: "#/components/schemas/UserId"
+          $ref: "#/components/schemas/Owner"
         buying:
           type: object
           required:
