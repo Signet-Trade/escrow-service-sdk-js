@@ -361,31 +361,6 @@ paths:
 
   # WIP, is mostly copied from v0
   /v1/otc:
-    get:
-      tags:
-        - escrowOverTheCounter
-      summary: Get all OTC order book listings
-      description: Get all OTC order book listing
-      operationId: getOrderBook
-      parameters:
-        - $ref: "#/components/parameters/buyName"
-        - $ref: "#/components/parameters/sellName"
-        - $ref: "#/components/parameters/userId"
-      responses:
-        "200":
-          description: Fetched escrow listings successfully
-          content:
-            application/json:
-              schema:
-                type: "array"
-                items:
-                  $ref: "#/components/schemas/OverTheCounterListing"
-                maxItems: 1000
-                minItems: 0
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
     post:
       tags:
         - escrowOverTheCounter
@@ -400,6 +375,49 @@ paths:
       responses:
         "201":
           $ref: "#/components/responses/OverTheCounterResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+  /v1/otc/{pair}:
+    get:
+      tags:
+        - escrowOverTheCounter
+      summary: Get all OTC order book listings
+      description: Get all OTC order book listing
+      operationId: getOrderBook
+      parameters:
+        - $ref: "#/components/parameters/pair"
+        - $ref: "#/components/parameters/userId"
+      responses:
+        "200":
+          description: Fetched escrow listings successfully
+          content:
+            application/json:
+              schema:
+                type: "object"
+                required:
+                  - buyOrders
+                  - sellOrders
+                  - pair
+                properties:
+                  pair:
+                    type: string
+                    pattern: '^[a-zA-Z0-9\-()]+_[a-zA-Z0-9\-()]+$'
+                    description: Cryptocurrency (coin or token) pair joined with `_`
+                    example: usdc (erc-20)_xelis
+                  buyOrders:
+                    type: "array"
+                    items:
+                      $ref: "#/components/schemas/OverTheCounterListing"
+                    maxItems: 1000
+                    minItems: 0
+                  sellOrders:
+                    type: "array"
+                    items:
+                      $ref: "#/components/schemas/OverTheCounterListing"
+                    maxItems: 1000
+                    minItems: 0
         "400":
           $ref: "#/components/responses/BadRequest"
         "401":
@@ -579,6 +597,16 @@ components:
       description: "Validation that the user is who they claim"
       schema:
         type: "string"
+    pair:
+      in: path
+      name: pair
+      required: true
+      description: Cryptocurrency (coin or token) pair joined with `_`
+      schema:
+        type: string
+        pattern: '^[a-zA-Z0-9\-()]+_[a-zA-Z0-9\-()]+$'
+        description: Cryptocurrency (coin or token) pair joined with `_`
+        example: usdc (erc-20)_xelis
 
   requestBodies:
     Auth:
