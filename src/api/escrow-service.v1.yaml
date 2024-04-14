@@ -381,7 +381,7 @@ paths:
           $ref: "#/components/responses/BadRequest"
         "401":
           $ref: "#/components/responses/Unauthorized"
-  /v1/otc/{pair}:
+  /v1/otc/orderbook/{pair}:
     get:
       tags:
         - escrowOverTheCounter
