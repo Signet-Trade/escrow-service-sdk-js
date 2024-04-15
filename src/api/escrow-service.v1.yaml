@@ -497,15 +497,14 @@ paths:
         "401":
           $ref: "#/components/responses/Unauthorized"
 
-  /v1/user/{userId}:
+  /v1/user:
     get:
       tags:
         - user
       summary: Get last known wallets for user
       description: Get last known wallets for user
-      operationId: getUser
+      operationId: getUserByAuth
       parameters:
-        - $ref: "#/components/parameters/userIdPath"
         - $ref: "#/components/parameters/Authorization"
       responses:
         "200":
