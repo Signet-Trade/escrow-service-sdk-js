@@ -824,7 +824,7 @@ components:
       maxLength: 24
       example: 6463b2745c41b4fac0387d0f
       description: MongoDB Object Identifier
-    OrderUserId:
+    orderOwner:
       type: string
       description: "Owner's Auth0 Identifier"
     WalletAuth:
@@ -876,7 +876,7 @@ components:
     OverTheCounterRequest:
       type: object
       required:
-        - OrderUserId
+        - orderOwner
         - orderType
         - price
         - baseAsset
@@ -885,8 +885,8 @@ components:
         - quoteAsset
         - quoteAssetWalletAddress
       properties:
-        OrderUserId:
-          $ref: "#/components/schemas/OrderUserId"
+        orderOwner:
+          $ref: "#/components/schemas/orderOwner"
         orderType:
           $ref: "#/components/schemas/orderType"
         price:
@@ -927,7 +927,7 @@ components:
       type: object
       required:
         - orderId
-        - OrderUserId
+        - orderOwner
         - status
         - orderType
         - price
@@ -937,8 +937,8 @@ components:
       properties:
         orderId:
           $ref: "#/components/schemas/ObjectId"
-        OrderUserId:
-          $ref: "#/components/schemas/OrderUserId"
+        orderOwner:
+          $ref: "#/components/schemas/orderOwner"
         status:
           $ref: "#/components/schemas/status"
         orderType:
