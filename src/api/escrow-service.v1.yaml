@@ -366,8 +366,6 @@ paths:
         - escrowOverTheCounter
       summary: Create an escrow request
       operationId: createLimitOrder
-      parameters:
-        - $ref: "#/components/parameters/Authorization"
       requestBody:
         required: true
         content:
@@ -455,7 +453,7 @@ paths:
       description: Deletes the escrow transaction and automatically begins the refund process
       operationId: deleteLimitOrder
       parameters:
-        - $ref: "#/components/parameters/Authorization"
+        - $ref: "#/components/parameters/userIdReq"
         - $ref: "#/components/parameters/OrderId"
       responses:
         "201":
@@ -521,7 +519,6 @@ paths:
       operationId: deleteKnownWallets
       parameters:
         - $ref: "#/components/parameters/userIdPath"
-        - $ref: "#/components/parameters/Authorization"
       responses:
         "201":
           $ref: "#/components/responses/Success"
@@ -605,13 +602,6 @@ components:
       description: User Id
       schema:
         type: string
-    Authorization:
-      in: "header"
-      name: "Authorization"
-      required: true
-      description: "Validation that the user is who they claim"
-      schema:
-        type: "string"
     pair:
       in: path
       name: pair
@@ -834,7 +824,7 @@ components:
       maxLength: 24
       example: 6463b2745c41b4fac0387d0f
       description: MongoDB Object Identifier
-    OrderOwner:
+    OrderUserId:
       type: string
       description: "Owner's Auth0 Identifier"
     WalletAuth:
@@ -886,7 +876,7 @@ components:
     OverTheCounterRequest:
       type: object
       required:
-        - orderOwner
+        - OrderUserId
         - orderType
         - price
         - baseAsset
@@ -895,8 +885,8 @@ components:
         - quoteAsset
         - quoteAssetWalletAddress
       properties:
-        orderOwner:
-          $ref: "#/components/schemas/OrderOwner"
+        OrderUserId:
+          $ref: "#/components/schemas/OrderUserId"
         orderType:
           $ref: "#/components/schemas/orderType"
         price:
@@ -937,7 +927,7 @@ components:
       type: object
       required:
         - orderId
-        - orderOwner
+        - OrderUserId
         - status
         - orderType
         - price
@@ -947,8 +937,8 @@ components:
       properties:
         orderId:
           $ref: "#/components/schemas/ObjectId"
-        orderOwner:
-          $ref: "#/components/schemas/OrderOwner"
+        OrderUserId:
+          $ref: "#/components/schemas/OrderUserId"
         status:
           $ref: "#/components/schemas/status"
         orderType:
