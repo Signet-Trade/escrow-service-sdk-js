@@ -379,6 +379,49 @@ paths:
           $ref: "#/components/responses/BadRequest"
         "401":
           $ref: "#/components/responses/Unauthorized"
+  /v1/otc/chart/{quoteAsset}:
+    get:
+      tags:
+        - escrowOverTheCounter
+      summary: Get chart data for quote asset
+      description: Get chart data for quote asset
+      operationId: getChart
+      parameters:
+        - $ref: "#/components/parameters/quoteAsset"
+      responses:
+        "200":
+          description: Fetched chart data successfully
+          content:
+            application/json:
+              schema:
+                type: "array"
+                items:
+                  type: "object"
+                  required:
+                    - date
+                    - open
+                    - high
+                    - low
+                    - close
+                    - volume
+                  properties:
+                    date:
+                      type: number
+                    open:
+                      type: string
+                    close:
+                      type: string
+                    high:
+                      type: number
+                    low:
+                      type: number
+                    volume:
+                      type: number
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
   /v1/otc/orderbook/{pair}:
     get:
       tags:
@@ -612,6 +655,14 @@ components:
         description: Cryptocurrency (coin or token) pair joined with _
         enum:
           ["usdt (erc-20)_xelis", "usdt (bep-20)_xelis", "usdt (trc-20)_xelis"]
+    quoteAsset:
+      in: path
+      name: quoteAsset
+      required: true
+      description: Quote Asset to retrieve data on
+      example: "xelis"
+      schema:
+        type: string
 
   requestBodies:
     Auth:
