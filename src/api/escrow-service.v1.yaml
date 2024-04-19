@@ -430,6 +430,7 @@ paths:
       operationId: getOrderBookByQuoteAsset
       parameters:
         - $ref: "#/components/parameters/quoteAsset"
+        - $ref: "#/components/parameters/page"
       responses:
         "200":
           description: Fetched escrow listings successfully
@@ -454,6 +455,7 @@ paths:
       operationId: getOrderBookByPair
       parameters:
         - $ref: "#/components/parameters/pair"
+        - $ref: "#/components/parameters/page"
       responses:
         "200":
           description: Fetched escrow listings successfully
@@ -668,6 +670,14 @@ components:
       description: User Id
       schema:
         type: string
+    page:
+      in: query
+      name: page
+      required: true
+      description: Pagination of getOrderBook
+      schema:
+        type: number
+        description: Page of data to retrieve
     pair:
       in: path
       name: pair
