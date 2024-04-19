@@ -421,14 +421,37 @@ paths:
           $ref: "#/components/responses/BadRequest"
         "401":
           $ref: "#/components/responses/Unauthorized"
-
+  /v1/otc/orderbook/asset/{quoteAsset}:
+    get:
+      tags:
+        - escrowOverTheCounter
+      summary: Get all OTC order book listings
+      description: Get all OTC order book listing
+      operationId: getOrderBookByQuoteAsset
+      parameters:
+        - $ref: "#/components/parameters/quoteAsset"
+      responses:
+        "200":
+          description: Fetched escrow listings successfully
+          content:
+            application/json:
+              schema:
+                type: "array"
+                items:
+                  $ref: "#/components/schemas/OverTheCounterListing"
+                maxItems: 100
+                minItems: 0
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
   /v1/otc/orderbook/{pair}:
     get:
       tags:
         - escrowOverTheCounter
       summary: Get all OTC order book listings
       description: Get all OTC order book listing
-      operationId: getOrderBook
+      operationId: getOrderBookByPair
       parameters:
         - $ref: "#/components/parameters/pair"
       responses:
