@@ -608,7 +608,7 @@ components:
       name: "orderId"
       required: true
       schema:
-        $ref: "#/components/schemas/ObjectId"
+        $ref: "#/components/schemas/OrderIdSchema"
     WalletAddress:
       in: path
       name: walletAddress
@@ -907,6 +907,11 @@ components:
       minLength: 24
       maxLength: 24
       example: 6463b2745c41b4fac0387d0f
+      description: MongoDB Object Identifier
+    OrderIdSchema:
+      type: string
+      format: uuid
+      example: e6782ca4-360c-4cae-a286-e12115365303
       description: MongoDB Object Identifier
     orderOwner:
       type: string
