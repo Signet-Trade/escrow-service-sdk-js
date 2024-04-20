@@ -947,6 +947,7 @@ components:
           # Upon refund or being matched
           "refunding",
           "finalizing",
+          "finalizing_refund",
 
           # Final states
           "cancelled",
