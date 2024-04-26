@@ -394,29 +394,43 @@ paths:
           content:
             application/json:
               schema:
-                type: "array"
-                items:
-                  type: "object"
-                  required:
-                    - date
-                    - open
-                    - high
-                    - low
-                    - close
-                    - volume
-                  properties:
-                    date:
-                      type: number
-                    open:
-                      type: string
-                    close:
-                      type: string
-                    high:
-                      type: number
-                    low:
-                      type: number
-                    volume:
-                      type: number
+                type: "object"
+                required:
+                  - chartData
+                  - lastTxPrice
+                  - volume24h
+                  - marketCap
+                properties:
+                  chartData:
+                    type: "array"
+                    items:
+                      type: "object"
+                      required:
+                        - date
+                        - open
+                        - high
+                        - low
+                        - close
+                        - volume
+                      properties:
+                        date:
+                          type: number
+                        open:
+                          type: string
+                        close:
+                          type: string
+                        high:
+                          type: number
+                        low:
+                          type: number
+                        volume:
+                          type: number
+                  lastTxPrice:
+                    type: string
+                  volume24h:
+                    type: string
+                  marketCap:
+                    type: string
         "400":
           $ref: "#/components/responses/BadRequest"
         "401":
@@ -947,7 +961,6 @@ components:
           # Upon refund or being matched
           "refunding",
           "finalizing",
-          "finalizing_refund",
 
           # Final states
           "cancelled",
