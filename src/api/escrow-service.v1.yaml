@@ -608,6 +608,22 @@ paths:
           $ref: "#/components/responses/BadRequest"
         "401":
           $ref: "#/components/responses/Unauthorized"
+  /v1/user/{userId}/refund:
+    get:
+      tags:
+        - user
+      summary: Trigger Refunds for the user
+      description: Trigger Refunds for the user
+      operationId: refundUser
+      parameters:
+        - $ref: "#/components/parameters/userIdPath"
+      responses:
+        "200":
+          $ref: "#/components/responses/UserInfo"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
 
 components:
   parameters:
