@@ -490,6 +490,9 @@ paths:
                         "usdt (erc-20)_xelis",
                         "usdt (bep-20)_xelis",
                         "usdt (trc-20)_xelis",
+                        "usdt (erc-20)_pactus",
+                        "usdt (bep-20)_pactus",
+                        "usdt (trc-20)_pactus",
                       ]
                   buyOrders:
                     type: "array"
@@ -717,7 +720,14 @@ components:
         type: string
         description: Cryptocurrency (coin or token) pair joined with _
         enum:
-          ["usdt (erc-20)_xelis", "usdt (bep-20)_xelis", "usdt (trc-20)_xelis"]
+          [
+            "usdt (erc-20)_xelis",
+            "usdt (bep-20)_xelis",
+            "usdt (trc-20)_xelis",
+            "usdt (erc-20)_pactus",
+            "usdt (bep-20)_pactus",
+            "usdt (trc-20)_pactus",
+          ]
     quoteAsset:
       in: path
       name: quoteAsset
